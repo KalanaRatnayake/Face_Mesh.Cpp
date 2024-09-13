@@ -50,11 +50,19 @@ else()
     FetchContent_MakeAvailable(tensorflow_rel_package)
   else()
     include(FetchContent)
-    FetchContent_Declare(
-        tensorflow_compiled_rel_package
-        URL https://github.com/CLFML/TensorFlow_Lite_Compiled/releases/download/v2.16.1/tensorflow_linux_generic_x86_64.zip
-        SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/external/tensorflow
-    )
+    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ARM64")
+      FetchContent_Declare(
+    tensorflow_compiled_rel_package
+    URL https://github.com/CLFML/TensorFlow_Lite_Compiled/releases/download/v2.16.1/tensorflow_linux_generic_aarch64.zip
+    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/external/tensorflow
+)
+    else()
+      FetchContent_Declare(
+      tensorflow_compiled_rel_package
+      URL https://github.com/CLFML/TensorFlow_Lite_Compiled/releases/download/v2.16.1/tensorflow_linux_generic_x86_64.zip
+      SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/external/tensorflow
+  )
+    endif()
     FetchContent_MakeAvailable(tensorflow_compiled_rel_package)
     if(CLFML_ROS2_PACKAGE_BUILD)
       install(FILES external/tensorflow/lib/libtensorflowlite.so DESTINATION lib/${PROJECT_NAME})
@@ -70,12 +78,12 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 
 
 if(CLFML_FACE_MESH_BUILD_EXAMPLE_PROJECTS)
-    FetchContent_Declare(
+  FetchContent_Declare(
         face_detector.cpp
         GIT_REPOSITORY https://github.com/CLFML/Face_Detector.Cpp.git
         GIT_TAG main
     )
-    FetchContent_MakeAvailable(face_detector.cpp)
-    add_executable(face_mesh_demo ${CMAKE_CURRENT_LIST_DIR}/example/face_mesh_demo/demo.cpp)
-    target_link_libraries(face_mesh_demo PUBLIC CLFML::${PROJECT_NAME} CLFML::face_detector)
+  FetchContent_MakeAvailable(face_detector.cpp)
+  add_executable(face_mesh_demo ${CMAKE_CURRENT_LIST_DIR}/example/face_mesh_demo/demo.cpp)
+  target_link_libraries(face_mesh_demo PUBLIC CLFML::${PROJECT_NAME} CLFML::face_detector)
 endif()
