@@ -50,7 +50,7 @@ else()
     FetchContent_MakeAvailable(tensorflow_rel_package)
   else()
     include(FetchContent)
-    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "ARM64")
+    if(${CMAKE_SYSTEM_PROCESSOR} STREQUAL "arm64")
       FetchContent_Declare(
     tensorflow_compiled_rel_package
     URL https://github.com/CLFML/TensorFlow_Lite_Compiled/releases/download/v2.16.1/tensorflow_linux_generic_aarch64.zip
