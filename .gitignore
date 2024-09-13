@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# External dependencies
+external/
+
 # IDE folders
 idea/
 .vscode/
