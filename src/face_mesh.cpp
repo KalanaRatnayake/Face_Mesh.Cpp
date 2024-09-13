@@ -4,6 +4,13 @@
 
 namespace CLFML::FaceMesh
 {
+    /* Mapping from model output tensor name to their array index */
+    enum output_tensor_id
+    {
+        OUTPUT_TENSOR_REGRESSOR,
+        OUTPUT_TENSOR_CONFIDENCE_SCORE
+    };
+
     FaceMesh::FaceMesh()
     {
     }
@@ -83,11 +90,6 @@ namespace CLFML::FaceMesh
             m_output_tensors.at(i) = m_model_interpreter->tensor(tensor_index);
         }
     }
-    enum output_tensor_id
-    {
-        OUTPUT_TENSOR_REGRESSOR,
-        OUTPUT_TENSOR_CLASSIFIER
-    };
 
     void FaceMesh::get_regressor()
     {
@@ -96,7 +98,7 @@ namespace CLFML::FaceMesh
         memcpy(&(m_model_regressors.at(0)), m_output_tensors.at(OUTPUT_TENSOR_REGRESSOR)->data.f, num_of_bytes);
     }
 
-        /**
+    /**
      *
      * @brief This function converts images with other color-spaces to RGB.
      *        As the model expects RGB formatted images.
@@ -151,37 +153,39 @@ namespace CLFML::FaceMesh
 
         /* Convert image to 128x128 pixels image with CV32_FC3 format */
         cv::Mat preprocessed_image = preprocess_image(frame);
-        
-         /* Copy the image data to the input tensor, which feeds it into the model */
+
+        /* Copy the image data to the input tensor, which feeds it into the model */
         memcpy(m_input_tensor->data.f, preprocessed_image.data, m_input_tensor->bytes);
 
         /* Run inference! */
         m_model_interpreter->Invoke();
 
-        /* Get model boxes */
+        /* Get model landmarks */
         get_regressor();
 
-
+        /* Scale the model landmarks to original image dimensions */
         float _x;
         float _y;
         cv::Point3f *point;
-        for(size_t point_idx = 0; point_idx < NUM_OF_FACE_MESH_POINTS; point_idx++) {
+        for (size_t point_idx = 0; point_idx < NUM_OF_FACE_MESH_POINTS; point_idx++)
+        {
             point = &(m_model_landmarks.at(point_idx));
-            _x = m_model_regressors.at(point_idx * 3) / m_input_frame_size_x;
-            _y = m_model_regressors.at((point_idx * 3)+1) / m_input_frame_size_y;
-            point->z = m_model_regressors.at((point_idx * 3)+2);
 
+            /* Do some linear scaling :) */
+            _x = m_model_regressors.at(point_idx * 3) / m_input_frame_size_x;
+            _y = m_model_regressors.at((point_idx * 3) + 1) / m_input_frame_size_y;
+            point->z = m_model_regressors.at((point_idx * 3) + 2);
+
+            /* Add original ROI offset if needed */
             point->x = (_x * image_width) + roi_offset.x;
-            point->y  = (_y * image_height) + roi_offset.y;
+            point->y = (_y * image_height) + roi_offset.y;
         }
-        
     }
 
     std::array<cv::Point3f, NUM_OF_FACE_MESH_POINTS> FaceMesh::get_face_mesh_points()
     {
         return m_model_landmarks;
     }
-
 
     FaceMesh::~FaceMesh()
     {
