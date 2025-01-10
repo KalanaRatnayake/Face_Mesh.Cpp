@@ -47,8 +47,8 @@ int main(int argc, char *argv[])
     CLFML::FaceDetection::FaceDetector face_det;
     CLFML::FaceMesh::FaceMesh mesh_det;
 
-    face_det.load_model(CFML_FACE_DETECTOR_CPU_MODEL_PATH);
-    mesh_det.load_model(CFML_FACE_MESH_CPU_MODEL_PATH);
+    face_det.load_model(CLFML_FACE_DETECTOR_CPU_MODEL_PATH);
+    mesh_det.load_model(CLFML_FACE_MESH_CPU_MODEL_PATH);
     /* Create window to show the face roi */
     cv::namedWindow("Display window", cv::WINDOW_NORMAL);
     cv::resizeWindow("Display window", width, height);

@@ -72,10 +72,9 @@ else()
 endif()
 
 set(FACE_MESH_CPU_MODEL_PATH ${CMAKE_CURRENT_LIST_DIR}/models/CPU/face_mesh.tflite)
-target_compile_definitions(${PROJECT_NAME} PUBLIC -DCFML_FACE_MESH_CPU_MODEL_PATH="${FACE_MESH_CPU_MODEL_PATH}")
+target_compile_definitions(${PROJECT_NAME} PUBLIC -DCLFML_FACE_MESH_CPU_MODEL_PATH="${FACE_MESH_CPU_MODEL_PATH}")
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
-
 
 if(CLFML_FACE_MESH_BUILD_EXAMPLE_PROJECTS)
   FetchContent_Declare(
@@ -86,4 +85,5 @@ if(CLFML_FACE_MESH_BUILD_EXAMPLE_PROJECTS)
   FetchContent_MakeAvailable(face_detector.cpp)
   add_executable(face_mesh_demo ${CMAKE_CURRENT_LIST_DIR}/example/face_mesh_demo/demo.cpp)
   target_link_libraries(face_mesh_demo PUBLIC CLFML::${PROJECT_NAME} CLFML::face_detector)
+  
 endif()
