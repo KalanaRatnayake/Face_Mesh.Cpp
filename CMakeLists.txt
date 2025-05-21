@@ -167,5 +167,8 @@ endif()
 
 if (CLFML_ROS2_PACKAGE_BUILD)
   install(FILES bindings/ros2/set_ld_path.sh DESTINATION lib/${PROJECT_NAME})
+  install(DIRECTORY include/ DESTINATION include)
+
+  ament_export_include_directories(include)
   ament_package()
 endif()
